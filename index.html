@@ -4,37 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Alex Rivera | Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; }
-    header { text-align: center; }
-    .projects, .testimonials { margin-top: 40px; }
-    .project, .testimonial { border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin: 10px 0; }
-    img { max-width: 150px; border-radius: 50%; }
+    body { font-family: 'Poppins', sans-serif; background: #f9fafb; color: #1f2937; }
+    .fade-in { opacity: 0; transform: translateY(10px); transition: all 0.6s ease; }
+    .fade-in.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
-<body>
-  <header>
-    <img id="profile-img" src="" alt="Profile photo" />
-    <h1 id="name"></h1>
-    <h3 id="role"></h3>
-    <p id="email"></p>
-    <p id="location"></p>
+<body class="min-h-screen flex flex-col items-center px-4 pb-20">
+
+  <header class="text-center py-10">
+    <img id="profile-img" src="" alt="Profile photo" class="mx-auto w-32 h-32 rounded-full shadow-lg mb-4 border-4 border-indigo-500">
+    <h1 id="name" class="text-4xl font-bold text-indigo-600"></h1>
+    <h2 id="role" class="text-xl text-gray-600"></h2>
+    <div class="mt-2 text-sm text-gray-500">
+      <span id="email"></span> • <span id="location"></span>
+    </div>
   </header>
 
-  <section class="about">
-    <h2 id="headline"></h2>
-    <p id="bio"></p>
+  <section id="about" class="max-w-2xl text-center fade-in">
+    <h2 id="headline" class="text-2xl font-semibold mb-2"></h2>
+    <p id="bio" class="text-gray-700"></p>
   </section>
 
-  <section class="projects">
-    <h2>Projects</h2>
-    <div id="projects-container"></div>
+  <section class="max-w-4xl w-full mt-16 fade-in">
+    <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-8">Projects</h2>
+    <div id="projects-container" class="grid md:grid-cols-2 gap-6"></div>
   </section>
 
-  <section class="testimonials">
-    <h2>Testimonials</h2>
-    <div id="testimonials-container"></div>
+  <section class="max-w-3xl w-full mt-16 fade-in">
+    <h2 class="text-3xl font-semibold text-center text-indigo-700 mb-8">Testimonials</h2>
+    <div id="testimonials-container" class="space-y-4"></div>
   </section>
+
+  <footer class="mt-20 text-gray-400 text-sm">
+    © <span id="year"></span> <span id="name-footer"></span>. All rights reserved.
+  </footer>
 
   <script>
     const SHEET_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLgAJtpRFBuiRUqAx6VMfMnQTkxk85uoFC9vGwQUKdtEqhTD9SJi5BEV6yTkRVn_Rs_QjhmOtRxSK8Nl9roukqF04urSmxMVGIHGSJUwkkQ2Qm2DV1pmFo4dQaZuLjZ8lkG_-xaEaAxmbmKBl9Dr9s2kcxmO4cPKi8uK8UnWDQn8x7kst5iUdRyaLIn5miiszhx1hbH8OVSjTTp4rTt_F8fASJub1e3kSx2O-PU5D2lNpqYaJZGG7ZCRqjhWW5z9SYLiJ-QTjC6lKfgnpeR5rI7IhxSXRA&lib=MZZD7lx3hS7HtxKx1fDoVmUJXAh8EiPrO';
@@ -45,38 +53,51 @@
         const p = data.personal;
         const a = data.about;
 
+        // Personal Info
         document.getElementById('name').textContent = p['Name'];
         document.getElementById('role').textContent = p['Role'];
         document.getElementById('email').textContent = p['Email'];
         document.getElementById('location').textContent = p['Location'];
         document.getElementById('profile-img').src = p['Profile Image URL'];
+        document.getElementById('name-footer').textContent = p['Name'];
+        document.getElementById('year').textContent = new Date().getFullYear();
 
+        // About
         document.getElementById('headline').textContent = a['Headline'];
         document.getElementById('bio').textContent = a['Bio'];
 
+        // Projects
         const projContainer = document.getElementById('projects-container');
         data.projects.forEach(prj => {
           projContainer.innerHTML += `
-            <div class="project">
-              <h3>${prj['Title']}</h3>
-              <p>${prj['Description']}</p>
-              <small>${prj['Tech Stack']}</small><br>
-              <a href="${prj['Project Link']}">View Project</a>
+            <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition p-5 flex flex-col justify-between">
+              <div>
+                <img src="${prj['Image URL']}" alt="${prj['Title']}" class="rounded-lg mb-4 w-full h-40 object-cover">
+                <h3 class="text-xl font-semibold text-indigo-600 mb-2">${prj['Title']}</h3>
+                <p class="text-gray-700 mb-3">${prj['Description']}</p>
+                <span class="text-sm text-gray-500 italic">${prj['Tech Stack']}</span>
+              </div>
+              <a href="${prj['Project Link']}" target="_blank" class="mt-4 inline-block bg-indigo-600 text-white text-center py-2 rounded-lg hover:bg-indigo-700">View Project</a>
             </div>
           `;
         });
 
+        // Testimonials
         const tContainer = document.getElementById('testimonials-container');
         data.testimonials.forEach(t => {
           tContainer.innerHTML += `
-            <div class="testimonial">
-              <p>"${t['Review']}"</p>
-              <strong>- ${t['Name']}</strong> ${t['Rating']}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <p class="text-gray-700 italic">"${t['Review']}"</p>
+              <div class="mt-3 font-semibold text-indigo-600">– ${t['Name']} ${t['Rating'] || ''}</div>
             </div>
           `;
         });
+
+        // Reveal with fade-in
+        document.querySelectorAll('.fade-in').forEach(el => setTimeout(() => el.classList.add('show'), 200));
       })
       .catch(err => console.error('Error fetching sheet data:', err));
   </script>
+
 </body>
 </html>
